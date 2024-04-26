@@ -9,7 +9,6 @@ import java.util.Scanner;
 public class TopticProductor {
 
     private static final String TOPIC_EXCHANGE_NAME = "topic-exchange";
-
     public static void main(String[] argv) throws Exception {
         //创建链接工厂
         ConnectionFactory factory = new ConnectionFactory();
@@ -26,7 +25,6 @@ public class TopticProductor {
                 if (splits.length<1){
                     continue;
                 }
-
                 message = splits[0];
                 String routingKey = splits[1];
                 System.out.println("message: "+ message + " " + "routingKey: "+ routingKey);
