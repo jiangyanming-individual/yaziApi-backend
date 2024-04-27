@@ -1,26 +1,62 @@
-# SpringBoot 项目初始化
+# 鸭子智能BI项目
 
-## 模板特点
+## 项目介绍
+> 基于Spring Boot + AIGC技术搭建的一款项目智能BI项目, 其区别于传统的BI，用户（数据分析者）只需要导入最原始的数据集，
+> 输入想要进行分析的目标（比如帮我分析一下网站用户的增长趋势)， 就能利用AI自动生成一个符合要求的图表以及分析结论。
+> 此外，还会有图表管理、异步生成等功能。
 
-### 效果展示
+## 项目展示 
+### 首页
+
 ![img_1.png](img_1.png)
+### 后端
+
 ![img.png](img.png)
+![img_5.png](img_5.png)
 
-### 主流框架 & 特性
+## 需求分析
+- 智能分析：用户输入目标和原始数据（图表类型），可以自动生成图表和分析结论
+- 图表管理
+- 图表生成的异步化（消息队列）
+- 对接 AI 能力
 
-- Spring Boot 2.7.x（贼新）
-- Spring MVC
-- MyBatis + MyBatis Plus 数据访问（开启分页）
-- Spring Boot 调试工具和项目处理器
-- Spring AOP 切面编程
-- Spring Scheduler 定时任务
-- Spring 事务注解
+## 项目架构图
 
-### 数据存储
+### 基础流程
+> 客户端输入分析诉求和原始数据，向业务后端发送请求。业务后端利用AI服务处理客户端数据，保持到数据库，并生成图表。处理后的数据由业务后端发送给AI服务，AI服务生成结果并返回给后端，最终将结果返回给客户端展示。
 
-- MySQL 数据库
-- Redis 内存数据库
-- Elasticsearch 搜索引擎
+
+![img_2.png](img_2.png)
+
+
+### 优化后的流程
+> 优化流程（异步化）：客户端输入分析诉求和原始数据，向业务后端发送请求。业务后端将请求事件放入消息队列，并为客户端生成图表Id号，让要生成图表的客户端去排队，消息队列根据服务负载情况，定期检查进度，如果AI服务还能处理更多的图表生成请求，就向任务处理模块发送消息。
+任务处理模块调用AI服务处理客户端数据，AI 服务异步生成结果返回给后端并保存到数据库，当后端的AI工服务生成完毕后，可以通过向前端发送通知的方式，或者通过业务后端监控数据库中图表生成服务的状态，来确定生成结果是否可用。若生成结果可用，前端即可获取并处理相应的数据，最终将结果返回给客户端展示。在此期间，用户可以去做自己的事情。
+
+
+![img_4.png](img_4.png)
+
+## 技术选型
+
+### 前端
+- React 
+- Umi
+- Ant Design Pro
+- 可视化开发库：Echarts √ 、HighChairts + AntV
+- umi openapi 代码生成：自动生成后端调用代码
+- EChart 图表生成
+
+### 后端
+
+- Spring Boot 2.7
+- MySQL数据库
+- Redis：Redissson限流控制
+- MyBatis Plus 数据库访问结构
+- 消息队列：RabbitMQ
+- AI能力：Open AI接口开发
+- Excel上传和数据的解析：Easy Excel
+- Swagger + Knife4j 项目文档
+- Hutool 工具库
 
 ### 工具类
 
@@ -44,106 +80,3 @@
 - 多环境配置
 
 
-## 业务功能
-
-- 提供示例 SQL（用户、帖子、帖子点赞、帖子收藏表）
-- 用户登录、注册、注销、更新、检索、权限管理
-- 智能分析同步和异步
-- 图表管理页面
-
-### 单元测试
-
-- JUnit5 单元测试
-- 示例单元测试类
-
-### 架构设计
-
-- 合理分层
-
-### MySQL 数据库
-
-1）修改 `application.yml` 的数据库配置为你自己的：
-
-```yml
-spring:
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/my_db
-    username: root
-    password: 123456
-```
-
-2）执行 `sql/create_table.sql` 中的数据库语句，自动创建库表
-
-3）启动项目，访问 `http://localhost:8101/api/doc.html` 即可打开接口文档，不需要写前端就能在线调试接口了~
-
-![](doc/swagger.png)
-
-### Redis 分布式登录
-
-1）修改 `application.yml` 的 Redis 配置为你自己的：
-
-```yml
-spring:
-  redis:
-    database: 1
-    host: localhost
-    port: 6379
-    timeout: 5000
-    password: 123456
-```
-
-2）修改 `application.yml` 中的 session 存储方式：
-
-```yml
-spring:
-  session:
-    store-type: redis
-```
-
-3）移除 `MainApplication` 类开头 `@SpringBootApplication` 注解内的 exclude 参数：
-
-修改前：
-
-```java
-@SpringBootApplication(exclude = {RedisAutoConfiguration.class})
-```
-
-修改后：
-
-
-```java
-@SpringBootApplication
-```
-
-### Elasticsearch 搜索引擎
-
-1）修改 `application.yml` 的 Elasticsearch 配置为你自己的：
-
-```yml
-spring:
-  elasticsearch:
-    uris: http://localhost:9200
-    username: root
-    password: 123456
-```
-
-2）复制 `sql/post_es_mapping.json` 文件中的内容，通过调用 Elasticsearch 的接口或者 Kibana Dev Tools 来创建索引（相当于数据库建表）
-
-```
-PUT post_v1
-{
- 参数见 sql/post_es_mapping.json 文件
-}
-```
-
-这步不会操作的话需要补充下 Elasticsearch 的知识，或者自行百度一下~
-
-3）开启同步任务，将数据库的帖子同步到 Elasticsearch
-
-找到 job 目录下的 `FullSyncPostToEs` 和 `IncSyncPostToEs` 文件，取消掉 `@Component` 注解的注释，再次执行程序即可触发同步：
-
-```java
-// todo 取消注释开启任务
-//@Component
-```
