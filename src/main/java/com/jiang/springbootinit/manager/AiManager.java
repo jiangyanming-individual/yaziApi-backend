@@ -27,11 +27,9 @@ public class AiManager {
         DevChatRequest devChatRequest = new DevChatRequest();
         devChatRequest.setModelId(modelId);//鱼聪明的id
         devChatRequest.setMessage(message);
-
         BaseResponse<DevChatResponse> response = yuCongMingClient.doChat(devChatRequest);
         if (response == null){
             throw new BusinessException(ErrorCode.PARAMS_ERROR,"返回为空");
-
         }
         //返回数据内容：
         return response.getData().getContent();

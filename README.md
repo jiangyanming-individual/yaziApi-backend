@@ -2,6 +2,10 @@
 
 ## 模板特点
 
+### 效果展示
+![img_1.png](img_1.png)
+![img.png](img.png)
+
 ### 主流框架 & 特性
 
 - Spring Boot 2.7.x（贼新）

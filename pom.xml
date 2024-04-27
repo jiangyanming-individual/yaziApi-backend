@@ -85,6 +85,13 @@
             <artifactId>yucongming-java-sdk</artifactId>
             <version>0.0.3</version>
         </dependency>
+<!--        rabbitmq-->
+        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-amqp -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+            <version>2.7.2</version>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -114,12 +121,7 @@
             <scope>runtime</scope>
             <optional>true</optional>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>mysql</groupId>-->
-<!--            <artifactId>mysql-connector-java</artifactId>-->
-<!--            <scope>runtime</scope>-->
-<!--        </dependency>-->
-        <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
@@ -145,6 +147,13 @@
             <artifactId>junit</artifactId>
             <version>4.13.2</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-launcher</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <!--        导入druid的依赖-->
         <dependency>
             <groupId>com.alibaba</groupId>

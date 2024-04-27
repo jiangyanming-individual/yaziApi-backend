@@ -5,7 +5,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.gson.Gson;
 import com.jiang.springbootinit.annotation.AuthCheck;
+import com.jiang.springbootinit.bimq.BiMqProductor;
 import com.jiang.springbootinit.common.*;
+import com.jiang.springbootinit.constant.BiMqConstant;
 import com.jiang.springbootinit.constant.CommonConstant;
 import com.jiang.springbootinit.constant.FileConstant;
 import com.jiang.springbootinit.constant.UserConstant;
@@ -65,6 +67,9 @@ public class ChartController {
 
     @Resource
     private RedissonLimitRateManager redissonLimitRateManager;
+
+    @Resource
+    private BiMqProductor biMqProductor;
 
     @Resource
     private ThreadPoolExecutor threadPoolExecutor;
@@ -442,6 +447,91 @@ public class ChartController {
                 return;
             }
         },threadPoolExecutor);
+
+        //返回给前端数据
+        BiGenResponse biGenResponse = new BiGenResponse();
+        biGenResponse.setChartId(chart.getId()); //返回图表id
+        return ResultUtils.success(biGenResponse);
+    }
+
+    /***
+     * 异步生成数据，使用mq的方式
+     *
+     * @param multipartFile
+     * @param genChartByAiRequest
+     * @param request
+     * @return
+     * @throws IOException
+     */
+    @PostMapping("/generate/async/mq")
+    public BaseResponse<BiGenResponse> geneChart_asyn_mq(@RequestPart("file") MultipartFile multipartFile,
+                                                      GenChartByAiRequest genChartByAiRequest, HttpServletRequest request) throws IOException {
+        String goal = genChartByAiRequest.getGoal();
+        String chartName = genChartByAiRequest.getChartName();
+        String chartType = genChartByAiRequest.getChartType();
+        //获取当前系统登录的用户：
+        User loginUser = userService.getLoginUser(request);
+        //校验参数：
+        ThrowUtils.throwIf(StringUtils.isBlank(goal),ErrorCode.PARAMS_ERROR,"分析目标为空");
+        ThrowUtils.throwIf(StringUtils.isNotBlank(chartName)  && chartName.length()>100,
+                ErrorCode.PARAMS_ERROR,"图表名称过长");
+        // 1.系统预设不用prompt;直接调用现有模型id
+        long biModelId = BiMqConstant.BI_MODEL_ID;
+        //文件安全校验
+        /**
+         * 文件大小 1M
+         */
+        long FILE_MAX_SIZE = 1 * 1024 * 1024L;
+        List<String> VALID_FILE_SUFFIX= Arrays.asList("xlsx","xls","csv","json");
+        long size = multipartFile.getSize();
+        ThrowUtils.throwIf(size>FILE_MAX_SIZE,ErrorCode.PARAMS_ERROR,"文件大小超过1M");
+        String originalFilename = multipartFile.getOriginalFilename();
+        String suffix = FileUtil.getSuffix(originalFilename);//获取后缀
+        ThrowUtils.throwIf(!VALID_FILE_SUFFIX.contains(suffix),ErrorCode.PARAMS_ERROR,"文件格式不支持");
+        /**
+         * 使用调用接口限流：
+         */
+        redissonLimitRateManager.doLimitRate("genChartByAi_"+loginUser.getId());
+        // (1)分析需求：
+        // 分析网站用户的增长情况
+
+        // (2)原始数据：
+        // 日期，用户数
+        // 1号，10
+        // 2号，20
+        // 3号，30
+        //用户输入：
+        StringBuilder userInput = new StringBuilder(); //线程不安全，但效率高
+        //1.分析目标
+        userInput.append("分析需求：").append("\n");
+        String userGoal=goal;
+        if (StringUtils.isNotBlank(chartType)){
+            userGoal+= "请使用,"+chartType;
+        }
+        userInput.append(userGoal).append("\n");
+        //2. 原始数据：：
+        userInput.append("原始数据：").append("\n");
+        //2.1 压缩内容，转为csv格式
+        String csvData = ExcelToCsvUtils.excelToCsv(multipartFile);
+        //2.2 拼接内容：
+        userInput.append(csvData).append("\n");
+
+        //异步生成：先将用户的数据插入到数据库
+        Chart chart = new Chart();
+        chart.setGoal(goal);
+        chart.setChartData(csvData);
+        chart.setChartType(chartType);
+        chart.setChartName(chartName);
+        chart.setUserId(loginUser.getId());
+        chart.setChartStatus(ChartStatusEnum.WAIT_STATUS.getValue()); //设置为wait状态
+        boolean save = ChartService.save(chart);
+        if (!save){
+            throw new BusinessException(ErrorCode.OPERATION_ERROR,"插入数据错误");
+        }
+
+        //mq 往消息队列中发chartId;
+        Long newChartId = chart.getId();
+        biMqProductor.sendMessage(String.valueOf(newChartId)); //发送chartId
 
         //返回给前端数据
         BiGenResponse biGenResponse = new BiGenResponse();
