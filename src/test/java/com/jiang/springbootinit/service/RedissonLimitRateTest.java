@@ -10,7 +10,7 @@ import javax.annotation.Resource;
  * @author Lenovo
  * @date 2024/4/21
  * @time 9:55
- * @project springboot-init
+ * @project yaziApi-backend
  **/
 @SpringBootTest
 public class RedissonLimitRateTest {

@@ -15,7 +15,7 @@ import javax.annotation.Resource;
  * @author Lenovo
  * @date 2024/4/19
  * @time 10:53
- * @project springboot-init
+ * @project yaziApi-backend
  **/
 @Component
 public class AiManager {

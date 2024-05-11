@@ -1,66 +1,53 @@
 # 数据库初始化
 
 -- 创建库
-create database if not exists smart_bi;
+create database if not exists yazi_Api;
 
 -- 切换库
-use smart_bi;
+use yazi_Api;
 
 -- 用户表
-create table if not exists user
+-- yaziApi.`user`
+create table if not exists yazi_Api.`user`
 (
-    id bigint auto_increment comment 'id' primary key,
-    userAccount varchar(256) not null comment '账号',
-    userPassword varchar(512) not null comment '密码',
-    userName varchar(256) null comment '用户昵称',
-    userAvatar varchar(1024) null comment '用户头像',
-    userRole varchar(256) default 'user' not null comment '用户角色：user/admin',
-    createTime datetime default CURRENT_TIMESTAMP not null comment '创建时间',
-    updateTime datetime default CURRENT_TIMESTAMP not null on update
-                CURRENT_TIMESTAMP comment '更新时间',
-    isDelete tinyint default 0 not null comment '是否删除',
-    index idx_userAccount(userAccount)
-) comment '用户' collate = utf8mb4_unicode_ci;
+    `id` bigint not null auto_increment comment '主键' primary key,
+    `userAccount` varchar(256) not null comment '账号',
+    `userPassword` varchar(512) not null comment '密码',
+    `userName` varchar(256)  null comment '用户昵称',
+    `userAvatar` varchar(1024)  null comment '用户头像',
+    `userRole` varchar(256) default 'user' not null comment '用户角色：user/admin',
+    `createTime` datetime default CURRENT_TIMESTAMP not null comment '创建时间',
+    `updateTime` datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    `isDelete` tinyint default 0 not null comment '是否删除(0-未删, 1-已删)'
+) comment 'yaziApi.`user`' collate = utf8mb4_unicode_ci;
 
--- 图表信息表
-create table if not exists chart
+
+-- 接口信息
+-- yazi_Api.`interface_info`
+create table if not exists yazi_Api.`interface_info`
 (
-    id bigint auto_increment comment 'id' primary key,
-    goal text null comment '分析目标',
-    chartName varchar(128) null comment '图表名称',
-    chartData text null comment '图表信息',
-    chartType varchar(256) null comment '图表类型',
-    genChart text null comment '生成的图表信息',
-    getResult text null comment '生成的分析结论',
-    chartStatus varchar(128) default 'wait'            not null comment 'wait-等待,running-生成中,succeed-成功生成,failed-生成失败',
-    execMessage text                                   null comment '执行信息',
-    userId bigint null comment '创建图标用户id',
-    createTime datetime default CURRENT_TIMESTAMP not null comment '创建时间',
-    updateTime datetime default CURRENT_TIMESTAMP not null on update
-                CURRENT_TIMESTAMP comment '更新时间',
-    isDelete tinyint default 0 not null comment '是否删除'
-) comment '图表信息表' collate = utf8mb4_unicode_ci;
+    `id` bigint not null auto_increment comment '主键' primary key,
+    `name` varchar(256) not null comment '接口信息',
+    `description` varchar(256) not null comment '描述',
+    `url` varchar(512) not null comment '用户昵称',
+    `requestHeader` text not null comment '请求头',
+    `reponseHeader` text not null comment '响应头',
+    `status` int default 0 not null comment '接口状态（0-关闭 1-开启）',
+    `userid` bigint not null comment '创建人',
+    `method` varchar(256) not null comment '请求类型',
+    `createTime` datetime default CURRENT_TIMESTAMP not null comment '创建时间',
+    `updateTime` datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    `isDelete` tinyint default 0 not null comment '是否删除(0-未删, 1-已删)'
+) comment 'yazi_Api.`interface_info`';
 
-# -- 帖子点赞表（硬删除）
-# create table if not exists post_thumb
-# (
-#     id         bigint auto_increment comment 'id' primary key,
-#     postId     bigint                             not null comment '帖子 id',
-#     userId     bigint                             not null comment '创建用户 id',
-#     createTime datetime default CURRENT_TIMESTAMP not null comment '创建时间',
-#     updateTime datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
-#     index idx_postId (postId),
-#     index idx_userId (userId)
-# ) comment '帖子点赞';
-#
-# -- 帖子收藏表（硬删除）
-# create table if not exists post_favour
-# (
-#     id         bigint auto_increment comment 'id' primary key,
-#     postId     bigint                             not null comment '帖子 id',
-#     userId     bigint                             not null comment '创建用户 id',
-#     createTime datetime default CURRENT_TIMESTAMP not null comment '创建时间',
-#     updateTime datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
-#     index idx_postId (postId),
-#     index idx_userId (userId)
-# ) comment '帖子收藏';
+
+insert into yazi_Api.`interface_info` (`name`, `description`, `url`, `requestHeader`, `reponseHeader`, `userid`, `method`) values ('严瑞霖', '孔修洁', 'www.signe-kling.info', 'ubQ', 'Vz', 6, '31Y');
+insert into yazi_Api.`interface_info` (`name`, `description`, `url`, `requestHeader`, `reponseHeader`, `userid`, `method`) values ('蒋博涛', '潘浩然', 'www.lera-lehner.info', 'Hiu', 'QEZs', 287015996, 'mok');
+insert into yazi_Api.`interface_info` (`name`, `description`, `url`, `requestHeader`, `reponseHeader`, `userid`, `method`) values ('莫聪健', '梁文昊', 'www.herschel-bode.com', 'qPF', '9Fi', 3244680751, 'zj');
+insert into yazi_Api.`interface_info` (`name`, `description`, `url`, `requestHeader`, `reponseHeader`, `userid`, `method`) values ('薛健柏', '戴思淼', 'www.matilde-huels.com', 'Whe', 'ur3H', 6043, '9rB');
+insert into yazi_Api.`interface_info` (`name`, `description`, `url`, `requestHeader`, `reponseHeader`, `userid`, `method`) values ('许鑫鹏', '段文', 'www.bernetta-predovic.info', 'XUF0', 'IvDn3', 1238, '0aRxT');
+insert into yazi_Api.`interface_info` (`name`, `description`, `url`, `requestHeader`, `reponseHeader`, `userid`, `method`) values ('贺弘文', '王文博', 'www.rafael-walter.biz', 'XIVHY', '1F', 3, 'QD');
+insert into yazi_Api.`interface_info` (`name`, `description`, `url`, `requestHeader`, `reponseHeader`, `userid`, `method`) values ('彭子涵', '邱昊天', 'www.isabel-larkin.co', 'UhZal', '0z', 444201419, 'jVXe');
+insert into yazi_Api.`interface_info` (`name`, `description`, `url`, `requestHeader`, `reponseHeader`, `userid`, `method`) values ('黎弘文', '史烨华', 'www.lamont-blanda.biz', 'tP1', 'eb', 61843007, 'ui');
+insert into yazi_Api.`interface_info` (`name`, `description`, `url`, `requestHeader`, `reponseHeader`, `userid`, `method`) values ('于睿渊', '侯乐驹', 'www.senaida-dare.biz', '20vg8', 'r1Q9', 6298, '0m3');
+insert into yazi_Api.`interface_info` (`name`, `description`, `url`, `requestHeader`, `reponseHeader`, `userid`, `method`) values ('段鸿煊', '孟子涵', 'www.zoila-casper.net', 'LL', '0u', 46273, 'b0');

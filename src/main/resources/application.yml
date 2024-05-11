@@ -1,7 +1,7 @@
 # 公共配置文件
 spring:
   application:
-    name: SmartBI-backend
+    name: yaziApi-backend
   # 默认 dev 环境
   profiles:
     active: dev
@@ -11,14 +11,13 @@ spring:
       matching-strategy: ant_path_matcher
   # session 配置
   session:
-    # todo 取消注释开启分布式 session（须先配置 Redis）
-    # store-type: redis
-    # 30 天过期
+    store-type: none # 没有本地缓存，所以设置为none
+#     30 天过期
     timeout: 2592000
   # 数据库配置
   # todo 需替换配置
   datasource:
-    url: jdbc:mysql://localhost:3306/smart_bi?useSSl=false;sueUnicode=true;characterEncoding=UTF-8;serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://localhost:3306/yazi_Api?useSSl=false;sueUnicode=true;characterEncoding=UTF-8;serverTimezone=Asia/Shanghai
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -30,11 +29,12 @@ spring:
     host: localhost
     port: 6379
     timeout: 5000
-  rabbitmq:
-    host: localhost
-    port: 5672
-    username: guest
-    password: guest
+# rabbitmq 的配置： 端口：5672  webUI :15672
+#  rabbitmq:
+#    host: localhost
+#    port: 5672
+#    username: guest
+#    password: guest
 
   #  password: 123456
   # Elasticsearch 配置
@@ -50,7 +50,7 @@ spring:
       max-file-size: 10MB
 server:
   address: 0.0.0.0
-  port: 8101
+  port: 8111
   servlet:
     context-path: /api
     # cookie 30 天过期

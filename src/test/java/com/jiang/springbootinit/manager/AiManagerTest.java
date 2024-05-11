@@ -9,7 +9,7 @@ import javax.annotation.Resource;
  * @author Lenovo
  * @date 2024/4/19
  * @time 11:01
- * @project springboot-init
+ * @project yaziApi-backend
  **/
 @SpringBootTest
 public class AiManagerTest {

@@ -16,7 +16,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  * @author Lenovo
  * @date 2024/4/21
  * @time 17:19
- * @project springboot-init
+ * @project yaziApi-backend
  **/
 @RestController
 @RequestMapping("/queue")

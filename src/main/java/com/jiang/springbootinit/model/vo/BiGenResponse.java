@@ -8,7 +8,7 @@ import java.io.Serializable;
  * @author Lenovo
  * @date 2024/4/19
  * @time 14:26
- * @project springboot-init
+ * @project yaziApi-backend
  **/
 @Data
 public class BiGenResponse implements Serializable {

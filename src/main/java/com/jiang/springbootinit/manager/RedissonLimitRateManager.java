@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
  * @author Lenovo
  * @date 2024/4/21
  * @time 9:42
- * @project springboot-init
+ * @project yaziApi-backend
  **/
 @Service
 public class RedissonLimitRateManager {

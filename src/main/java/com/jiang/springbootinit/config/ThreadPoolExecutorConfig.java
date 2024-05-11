@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
  * @author Lenovo
  * @date 2024/4/21
  * @time 17:11
- * @project springboot-init
+ * @project yaziApi-backend
  **/
 @Configuration
 public class ThreadPoolExecutorConfig {
