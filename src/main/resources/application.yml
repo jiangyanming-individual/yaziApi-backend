@@ -102,3 +102,9 @@ cos:
     secretKey: xxx
     region: xxx
     bucket: xxx
+
+# 自定义的sdk
+yaziapi:
+  client:
+    access-key: jiangyanming
+    secret-key: 123456

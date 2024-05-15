@@ -56,7 +56,6 @@ public class UserController {
     private WxOpenConfig wxOpenConfig;
 
     // region 登录相关
-
     /**
      * 用户注册
      *
@@ -77,7 +76,6 @@ public class UserController {
         long result = userService.userRegister(userAccount, userPassword, checkPassword);
         return ResultUtils.success(result);
     }
-
     /**
      * 用户登录
      *
@@ -100,7 +98,6 @@ public class UserController {
         return ResultUtils.success(loginUserVO);
     }
 
-
     /**
      * 用户注销
      *
@@ -115,7 +112,6 @@ public class UserController {
         boolean result = userService.userLogout(request);
         return ResultUtils.success(result);
     }
-
     /**
      * 获取当前登录用户
      *

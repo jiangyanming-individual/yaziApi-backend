@@ -120,11 +120,7 @@ public class InterfaceInfoServiceImpl extends ServiceImpl<InterfaceInfoMapper, I
      */
     @Override
     public InterfaceInfoVO getInterfaceInfoVO(InterfaceInfo interfaceInfo, HttpServletRequest request) {
-
         InterfaceInfoVO interfaceInfoVO = InterfaceInfoVO.objToVo(interfaceInfo);
-        long InterfaceInfoId = interfaceInfo.getId();
-        // 1. 关联查询用户信息
-        Long userId = interfaceInfo.getUserId();
         return interfaceInfoVO;
     }
 

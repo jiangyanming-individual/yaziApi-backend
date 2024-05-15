@@ -7,53 +7,42 @@ import java.util.Date;
 import lombok.Data;
 
 /**
- * 用户
- * @TableName user
+ *
+ * 用户-接口信息表
  */
-@TableName(value ="user")
+@TableName(value ="user_interface_info")
 @Data
-public class User implements Serializable {
+public class UserInterfaceInfo implements Serializable {
     /**
-     * id
+     * 主键
      */
-    @TableId(type = IdType.ASSIGN_ID)
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**
-     * 账号
+     * 接口调用者
      */
-    private String userAccount;
+    private Long userId;
 
     /**
-     * 密码
+     * 接口调用者
      */
-    private String userPassword;
+    private Long interfaceInfoId;
 
     /**
-     * 用户昵称
+     * 总的调用次数
      */
-    private String userName;
-
-
-    /**
-     * accessKey
-     */
-    private String accessKey;
+    private Integer totalNum;
 
     /**
-     * secretKey
+     * 剩余调用次数
      */
-    private String secretKey;
+    private Integer leftNum;
 
     /**
-     * 用户头像
+     * 接口调用状态（0-关闭 1-开启）
      */
-    private String userAvatar;
-
-    /**
-     * 用户角色：user/admin
-     */
-    private String userRole;
+    private Integer status;
 
     /**
      * 创建时间
@@ -66,9 +55,9 @@ public class User implements Serializable {
     private Date updateTime;
 
     /**
-     * 是否删除
+     * 是否删除(0-未删, 1-已删)
      */
-    @TableLogic
+    @TableLogic //逻辑删除
     private Integer isDelete;
 
     @TableField(exist = false)

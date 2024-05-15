@@ -62,7 +62,6 @@ public class ExcelToCsvUtils {
         return stringBuilder.toString(); //返回数据
     }
 
-
     public static String excelToCsv() throws IOException {
         File file=null;
         List<Map<Integer, String>> list = null;

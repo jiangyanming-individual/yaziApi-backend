@@ -14,6 +14,8 @@ create table if not exists yazi_Api.`user`
     `userAccount` varchar(256) not null comment '账号',
     `userPassword` varchar(512) not null comment '密码',
     `userName` varchar(256)  null comment '用户昵称',
+    `accessKey` varchar(512) null comment 'accessKey',
+    `secretKey` varchar(512) null comment 'accessKey',
     `userAvatar` varchar(1024)  null comment '用户头像',
     `userRole` varchar(256) default 'user' not null comment '用户角色：user/admin',
     `createTime` datetime default CURRENT_TIMESTAMP not null comment '创建时间',
@@ -30,6 +32,7 @@ create table if not exists yazi_Api.`interface_info`
     `name` varchar(256) not null comment '接口信息',
     `description` varchar(256) not null comment '描述',
     `url` varchar(512) not null comment '用户昵称',
+    `requestParams` text not null comment '请求参数',
     `requestHeader` text not null comment '请求头',
     `reponseHeader` text not null comment '响应头',
     `status` int default 0 not null comment '接口状态（0-关闭 1-开启）',
@@ -39,6 +42,8 @@ create table if not exists yazi_Api.`interface_info`
     `updateTime` datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
     `isDelete` tinyint default 0 not null comment '是否删除(0-未删, 1-已删)'
 ) comment 'yazi_Api.`interface_info`';
+
+
 
 
 insert into yazi_Api.`interface_info` (`name`, `description`, `url`, `requestHeader`, `reponseHeader`, `userid`, `method`) values ('严瑞霖', '孔修洁', 'www.signe-kling.info', 'ubQ', 'Vz', 6, '31Y');
@@ -51,3 +56,18 @@ insert into yazi_Api.`interface_info` (`name`, `description`, `url`, `requestHea
 insert into yazi_Api.`interface_info` (`name`, `description`, `url`, `requestHeader`, `reponseHeader`, `userid`, `method`) values ('黎弘文', '史烨华', 'www.lamont-blanda.biz', 'tP1', 'eb', 61843007, 'ui');
 insert into yazi_Api.`interface_info` (`name`, `description`, `url`, `requestHeader`, `reponseHeader`, `userid`, `method`) values ('于睿渊', '侯乐驹', 'www.senaida-dare.biz', '20vg8', 'r1Q9', 6298, '0m3');
 insert into yazi_Api.`interface_info` (`name`, `description`, `url`, `requestHeader`, `reponseHeader`, `userid`, `method`) values ('段鸿煊', '孟子涵', 'www.zoila-casper.net', 'LL', '0u', 46273, 'b0');
+
+
+create table if not exists yazi_Api.`user_interface_info`
+(
+    `id` bigint not null auto_increment comment '主键' primary key,
+    `userId` bigint not null comment '接口调用者',
+    `interfaceInfoId` bigint not null comment '接口调用者',
+    `totalNum` int default 0 not null comment '总的调用次数',
+    `leftlNum` int default 0 not null comment '剩余调用次数',
+    `status` int default 0 not null comment '接口调用状态（0-关闭 1-开启）',
+    `createTime` datetime default CURRENT_TIMESTAMP not null comment '创建时间',
+    `updateTime` datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    `isDelete` tinyint default 0 not null comment '是否删除(0-未删, 1-已删)'
+) comment 'yazi_Api.`interface_info`';
+
