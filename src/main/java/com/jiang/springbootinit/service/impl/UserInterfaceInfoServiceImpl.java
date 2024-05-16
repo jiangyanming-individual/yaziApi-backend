@@ -2,6 +2,7 @@ package com.jiang.springbootinit.service.impl;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.gson.Gson;
@@ -118,8 +119,25 @@ public class UserInterfaceInfoServiceImpl extends ServiceImpl<UserInterfaceInfoM
         userInterfaceInfoVOPage.setRecords(userInterfaceInfoVOList);
         return userInterfaceInfoVOPage;
     }
+
+    /**
+     * 统计调用接口的次数
+     * @param interfaceInfoId
+     * @param userId
+     * @return
+     */
+    @Override
+    public Boolean invokeCount(long interfaceInfoId, long userId) {
+        if (interfaceInfoId<=0 || userId<=0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"接口或者用户不存在");
+        }
+        UpdateWrapper<UserInterfaceInfo> userInterfaceInfoUpdateWrapper = new UpdateWrapper<>();
+        userInterfaceInfoUpdateWrapper.eq("userId", userId);
+        userInterfaceInfoUpdateWrapper.eq("interfaceInfoId", interfaceInfoId);
+        //剩余调用次数还要 >1
+        userInterfaceInfoUpdateWrapper.gt("leftNum", 0);
+        userInterfaceInfoUpdateWrapper.setSql("leftNum=leftNum -1,totalNum=totalNum + 1");
+        return this.update(userInterfaceInfoUpdateWrapper);
+    }
 }
-
-
-
 

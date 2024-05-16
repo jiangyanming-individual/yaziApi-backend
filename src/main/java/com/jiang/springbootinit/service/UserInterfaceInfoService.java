@@ -52,4 +52,8 @@ public interface UserInterfaceInfoService extends IService<UserInterfaceInfo> {
      * @return
      */
     Page<UserInterfaceInfoVO> getUserInterfaceInfoVOPage(Page<UserInterfaceInfo> interfaceInfoPage, HttpServletRequest request);
+
+
+
+    Boolean invokeCount(long interfaceInfoId, long userId);
 }
