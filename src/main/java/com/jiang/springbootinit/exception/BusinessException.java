@@ -13,6 +13,8 @@ public class BusinessException extends RuntimeException {
      */
     private final int code;
 
+
+    //message 是父类的参数：
     public BusinessException(int code, String message) {
         super(message);
         this.code = code;

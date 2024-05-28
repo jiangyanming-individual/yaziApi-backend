@@ -2,6 +2,8 @@ package com.jiang.springbootinit.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.gson.Gson;
+import com.jiang.apicommon.model.entity.User;
+import com.jiang.apicommon.model.entity.UserInterfaceInfo;
 import com.jiang.springbootinit.annotation.AuthCheck;
 import com.jiang.springbootinit.common.*;
 import com.jiang.springbootinit.constant.UserConstant;
@@ -10,8 +12,6 @@ import com.jiang.springbootinit.exception.ThrowUtils;
 import com.jiang.springbootinit.model.dto.userinterfaceinfo.UserInterfaceInfoAddRequest;
 import com.jiang.springbootinit.model.dto.userinterfaceinfo.UserInterfaceInfoQueryRequest;
 import com.jiang.springbootinit.model.dto.userinterfaceinfo.UserInterfaceInfoUpdateRequest;
-import com.jiang.springbootinit.model.entity.UserInterfaceInfo;
-import com.jiang.springbootinit.model.entity.User;
 import com.jiang.springbootinit.model.vo.UserInterfaceInfoVO;
 import com.jiang.springbootinit.service.UserInterfaceInfoService;
 import com.jiang.springbootinit.service.UserService;

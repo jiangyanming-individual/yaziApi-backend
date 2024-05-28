@@ -12,10 +12,7 @@ import javax.annotation.Resource;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author Lenovo
- * @date 2024/4/21
- * @time 9:42
- * @project yaziApi-backend
+ *限流的操作
  **/
 @Service
 public class RedissonLimitRateManager {

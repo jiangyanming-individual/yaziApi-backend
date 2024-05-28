@@ -1,6 +1,7 @@
 package com.jiang.springbootinit.controller;
 
 import cn.hutool.core.io.FileUtil;
+import com.jiang.apicommon.model.entity.User;
 import com.jiang.springbootinit.constant.FileConstant;
 import com.jiang.springbootinit.common.BaseResponse;
 import com.jiang.springbootinit.common.ErrorCode;
@@ -8,7 +9,6 @@ import com.jiang.springbootinit.common.ResultUtils;
 import com.jiang.springbootinit.exception.BusinessException;
 import com.jiang.springbootinit.manager.CosManager;
 import com.jiang.springbootinit.model.dto.file.UploadFileRequest;
-import com.jiang.springbootinit.model.entity.User;
 import com.jiang.springbootinit.model.enums.FileUploadBizEnum;
 import com.jiang.springbootinit.service.UserService;
 import java.io.File;

@@ -3,9 +3,8 @@ package com.jiang.springbootinit.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.jiang.apicommon.model.entity.UserInterfaceInfo;
 import com.jiang.springbootinit.model.dto.userinterfaceinfo.UserInterfaceInfoQueryRequest;
-import com.jiang.springbootinit.model.entity.UserInterfaceInfo;
-import com.jiang.springbootinit.model.entity.UserInterfaceInfo;
 import com.jiang.springbootinit.model.vo.UserInterfaceInfoVO;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,8 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 * @createDate 2024-05-15 20:53:22
 */
 public interface UserInterfaceInfoService extends IService<UserInterfaceInfo> {
-
-
     /**
      * 校验
      *
@@ -33,7 +30,6 @@ public interface UserInterfaceInfoService extends IService<UserInterfaceInfo> {
      * @return
      */
     QueryWrapper<UserInterfaceInfo> getQueryWrapper(UserInterfaceInfoQueryRequest userInterfaceInfoQueryRequest);
-
 
     /**
      * 获取接口封装
@@ -52,8 +48,6 @@ public interface UserInterfaceInfoService extends IService<UserInterfaceInfo> {
      * @return
      */
     Page<UserInterfaceInfoVO> getUserInterfaceInfoVOPage(Page<UserInterfaceInfo> interfaceInfoPage, HttpServletRequest request);
-
-
 
     Boolean invokeCount(long interfaceInfoId, long userId);
 }

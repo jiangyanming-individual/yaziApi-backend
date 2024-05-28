@@ -2,8 +2,8 @@ package com.jiang.springbootinit.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.jiang.apicommon.model.entity.InterfaceInfo;
 import com.jiang.springbootinit.model.dto.interfaceinfo.InterfaceInfoQueryRequest;
-import com.jiang.springbootinit.model.entity.InterfaceInfo;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.jiang.springbootinit.model.vo.InterfaceInfoVO;
 import javax.servlet.http.HttpServletRequest;

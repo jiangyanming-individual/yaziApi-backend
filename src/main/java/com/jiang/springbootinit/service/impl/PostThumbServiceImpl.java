@@ -2,8 +2,8 @@ package com.jiang.springbootinit.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.jiang.apicommon.model.entity.User;
 import com.jiang.springbootinit.mapper.PostThumbMapper;
-import com.jiang.springbootinit.model.entity.User;
 import com.jiang.springbootinit.service.PostThumbService;
 import com.jiang.springbootinit.common.ErrorCode;
 import com.jiang.springbootinit.exception.BusinessException;

@@ -1,11 +1,7 @@
 package com.jiang.springbootinit.model.vo;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.google.gson.Gson;
-import com.jiang.springbootinit.model.entity.InterfaceInfo;
-import com.jiang.springbootinit.model.entity.UserInterfaceInfo;
+import com.jiang.apicommon.model.entity.UserInterfaceInfo;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 

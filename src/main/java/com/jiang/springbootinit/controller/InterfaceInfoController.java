@@ -1,7 +1,10 @@
 package com.jiang.springbootinit.controller;
 
+
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.gson.Gson;
+import com.jiang.apicommon.model.entity.InterfaceInfo;
+import com.jiang.apicommon.model.entity.User;
 import com.jiang.springbootinit.annotation.AuthCheck;
 import com.jiang.springbootinit.common.*;
 import com.jiang.springbootinit.constant.UserConstant;
@@ -11,8 +14,6 @@ import com.jiang.springbootinit.model.dto.interfaceinfo.InterfaceInfoAddRequest;
 import com.jiang.springbootinit.model.dto.interfaceinfo.InterfaceInfoInovkeRequest;
 import com.jiang.springbootinit.model.dto.interfaceinfo.InterfaceInfoQueryRequest;
 import com.jiang.springbootinit.model.dto.interfaceinfo.InterfaceInfoUpdateRequest;
-import com.jiang.springbootinit.model.entity.InterfaceInfo;
-import com.jiang.springbootinit.model.entity.User;
 import com.jiang.springbootinit.model.enums.InterfaceInfoStatusEnum;
 import com.jiang.springbootinit.model.vo.InterfaceInfoVO;
 import com.jiang.springbootinit.service.InterfaceInfoService;
@@ -22,7 +23,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
@@ -182,7 +182,6 @@ public class InterfaceInfoController {
     }
 
 
-
     /**
      * 上线接口
      *
@@ -247,7 +246,6 @@ public class InterfaceInfoController {
         return ResultUtils.success(result);
     }
 
-
     /**
      * 接口调用
      *
@@ -277,7 +275,7 @@ public class InterfaceInfoController {
         User loginUser = userService.getLoginUser(request);
         String accessKey = loginUser.getAccessKey();
         String secretKey = loginUser.getSecretKey();
-
+        //引入客户端SDK 用于API签名认证，即对数据进行加密
         YaZiApiClient tempyaZiApiClient = new YaZiApiClient(accessKey,secretKey);
         Gson gson = new Gson();
         //调用接口

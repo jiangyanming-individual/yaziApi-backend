@@ -1,4 +1,5 @@
 package com.jiang.springbootinit;
+import org.apache.dubbo.config.spring.context.annotation.EnableDubbo;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,6 +18,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @MapperScan("com.jiang.springbootinit.mapper")
 @EnableScheduling
 @EnableAsync // 开启异步任务的注解
+@EnableDubbo
 @EnableAspectJAutoProxy(proxyTargetClass = true, exposeProxy = true)
 public class MainApplication {
 

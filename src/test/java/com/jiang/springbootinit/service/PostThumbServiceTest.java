@@ -2,7 +2,7 @@ package com.jiang.springbootinit.service;
 
 import javax.annotation.Resource;
 
-import com.jiang.springbootinit.model.entity.User;
+import com.jiang.apicommon.model.entity.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

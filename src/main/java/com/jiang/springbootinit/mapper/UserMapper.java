@@ -1,7 +1,7 @@
 package com.jiang.springbootinit.mapper;
 
-import com.jiang.springbootinit.model.entity.User;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.jiang.apicommon.model.entity.User;
 
 /**
 * @author Lenovo

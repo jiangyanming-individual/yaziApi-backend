@@ -1,7 +1,7 @@
 package com.jiang.springbootinit.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.jiang.springbootinit.model.entity.User;
+import com.jiang.apicommon.model.entity.User;
 import com.jiang.springbootinit.model.vo.PostVO;
 import com.jiang.springbootinit.common.BaseResponse;
 import com.jiang.springbootinit.common.ErrorCode;

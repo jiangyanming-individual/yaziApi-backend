@@ -1,17 +1,16 @@
 package com.jiang.springbootinit.service.impl;
 
-import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.gson.Gson;
+import com.jiang.apicommon.model.entity.User;
+import com.jiang.apicommon.model.entity.UserInterfaceInfo;
 import com.jiang.springbootinit.common.ErrorCode;
 import com.jiang.springbootinit.constant.CommonConstant;
 import com.jiang.springbootinit.exception.BusinessException;
 import com.jiang.springbootinit.model.dto.userinterfaceinfo.UserInterfaceInfoQueryRequest;
-import com.jiang.springbootinit.model.entity.User;
-import com.jiang.springbootinit.model.entity.UserInterfaceInfo;
 import com.jiang.springbootinit.model.vo.UserInterfaceInfoVO;
 import com.jiang.springbootinit.service.UserInterfaceInfoService;
 import com.jiang.springbootinit.mapper.UserInterfaceInfoMapper;

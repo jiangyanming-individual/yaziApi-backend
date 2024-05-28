@@ -1,8 +1,8 @@
 package com.jiang.springbootinit.service;
 
+import com.jiang.apicommon.model.entity.User;
 import com.jiang.springbootinit.model.entity.PostThumb;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.jiang.springbootinit.model.entity.User;
 
 /**
  * 帖子点赞服务

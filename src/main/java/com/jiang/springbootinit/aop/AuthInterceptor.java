@@ -1,9 +1,9 @@
 package com.jiang.springbootinit.aop;
 
+import com.jiang.apicommon.model.entity.User;
 import com.jiang.springbootinit.annotation.AuthCheck;
 import com.jiang.springbootinit.common.ErrorCode;
 import com.jiang.springbootinit.exception.BusinessException;
-import com.jiang.springbootinit.model.entity.User;
 import com.jiang.springbootinit.model.enums.UserRoleEnum;
 import com.jiang.springbootinit.service.UserService;
 
@@ -56,6 +56,7 @@ public class AuthInterceptor {
             }
             // 必须有管理员权限
             if (UserRoleEnum.ADMIN.equals(mustUserRoleEnum)) {
+                //判断当前登录用户是否有管理员权限：
                 if (!mustRole.equals(userRole)) {
                     throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
                 }

@@ -33,6 +33,5 @@ public class AiManager {
         }
         //返回数据内容：
         return response.getData().getContent();
-
     }
 }

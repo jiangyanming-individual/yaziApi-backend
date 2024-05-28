@@ -1,11 +1,11 @@
 package com.jiang.springbootinit.controller;
 
+import com.jiang.apicommon.model.entity.User;
 import com.jiang.springbootinit.common.BaseResponse;
 import com.jiang.springbootinit.common.ErrorCode;
 import com.jiang.springbootinit.common.ResultUtils;
 import com.jiang.springbootinit.exception.BusinessException;
 import com.jiang.springbootinit.model.dto.postthumb.PostThumbAddRequest;
-import com.jiang.springbootinit.model.entity.User;
 import com.jiang.springbootinit.service.PostThumbService;
 import com.jiang.springbootinit.service.UserService;
 import javax.annotation.Resource;

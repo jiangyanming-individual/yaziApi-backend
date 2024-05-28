@@ -1,17 +1,12 @@
 package com.jiang.springbootinit.model.vo;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.jiang.springbootinit.model.entity.InterfaceInfo;
+import com.jiang.apicommon.model.entity.InterfaceInfo;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 /**
  * 帖子视图

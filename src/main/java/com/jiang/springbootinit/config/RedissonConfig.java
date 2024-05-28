@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * 创建redisson 客户端
+ * 创建redisson 客户端，用于限流的配置
  */
 
 @Data
