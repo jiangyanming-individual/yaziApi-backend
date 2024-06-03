@@ -15,7 +15,6 @@ import javax.annotation.Resource;
  * 查询接口是否存在
  */
 
-
 @DubboService //表示是dubbo服务的提供者
 public class InnerInterfaceInfoServiceImpl implements InnerInterfaceInfoService {
     @Resource
@@ -30,6 +29,8 @@ public class InnerInterfaceInfoServiceImpl implements InnerInterfaceInfoService 
         QueryWrapper<InterfaceInfo> queryWrapper = new QueryWrapper<InterfaceInfo>();
         queryWrapper.eq("url",url);
         queryWrapper.eq("method",method);
-        return interfaceInfoMapper.selectOne(queryWrapper);
+        InterfaceInfo interfaceInfo = interfaceInfoMapper.selectOne(queryWrapper);
+        System.out.println("interfaceInfo:"+interfaceInfo);
+        return interfaceInfo;
     }
 }

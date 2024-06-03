@@ -46,6 +46,7 @@ public class InterfaceInfoController {
 
     private final static Gson GSON = new Gson();
 
+
     // region 增删改查
     /**
      * 创建
@@ -69,6 +70,7 @@ public class InterfaceInfoController {
         long newInterfaceInfoId = InterfaceInfo.getId();
         return ResultUtils.success(newInterfaceInfoId);
     }
+
 
     /**
      * 删除
@@ -248,7 +250,6 @@ public class InterfaceInfoController {
 
     /**
      * 接口调用
-     *
      * @param interfaceInfoInovkeRequest
      * @return
      */
@@ -270,10 +271,10 @@ public class InterfaceInfoController {
         if (oldInterfaceInfo.getStatus() == InterfaceInfoStatusEnum.OFFLINE.getValue()){
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR,"接口已关闭");
         }
-
         //获得ak 和sk
         User loginUser = userService.getLoginUser(request);
         String accessKey = loginUser.getAccessKey();
+        System.out.println("accessKey:"+accessKey);
         String secretKey = loginUser.getSecretKey();
         //引入客户端SDK 用于API签名认证，即对数据进行加密
         YaZiApiClient tempyaZiApiClient = new YaZiApiClient(accessKey,secretKey);
@@ -281,56 +282,9 @@ public class InterfaceInfoController {
         //调用接口
         com.jiang.yaziapiclientsdk.model.User user = gson.fromJson(userRequestParams, com.jiang.yaziapiclientsdk.model.User.class);
         String result = tempyaZiApiClient.getUsernameByPost(user);
+//        System.out.println("接口调用结果result:" + result);
         //返回结果
         return ResultUtils.success(result);
     }
-//    /**
-//     * 分页搜索（从 ES 查询，封装类）
-//     * @param InterfaceInfoQueryRequest
-//     * @param request
-//     * @return
-//     */
-//    @PostMapping("/search/page/vo")
-//    public BaseResponse<Page<InterfaceInfoVO>> searchInterfaceInfoVOByPage(@RequestBody InterfaceInfoQueryRequest InterfaceInfoQueryRequest,
-//            HttpServletRequest request) {
-//        long size = InterfaceInfoQueryRequest.getPageSize();
-//        // 限制爬虫
-//        ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
-//        Page<InterfaceInfo> InterfaceInfoPage = interfaceInfoService.searchFromEs(InterfaceInfoQueryRequest);
-//        return ResultUtils.success(interfaceInfoService.getInterfaceInfoVOPage(InterfaceInfoPage, request));
-//    }
-
-    /**
-     * 编辑（用户）
-     *
-     * @param InterfaceInfoEditRequest
-     * @param request
-     * @return
-     */
-//    @PostMapping("/edit")
-//    public BaseResponse<Boolean> editInterfaceInfo(@RequestBody InterfaceInfoEditRequest InterfaceInfoEditRequest, HttpServletRequest request) {
-//        if (InterfaceInfoEditRequest == null || InterfaceInfoEditRequest.getId() <= 0) {
-//            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-//        }
-//        InterfaceInfo InterfaceInfo = new InterfaceInfo();
-//        BeanUtils.copyProperties(InterfaceInfoEditRequest, InterfaceInfo);
-//        List<String> tags = InterfaceInfoEditRequest.getTags();
-//        if (tags != null) {
-//            InterfaceInfo.setTags(GSON.toJson(tags));
-//        }
-//        // 参数校验
-//        interfaceInfoService.validInterfaceInfo(InterfaceInfo, false);
-//        User loginUser = userService.getLoginUser(request);
-//        long id = InterfaceInfoEditRequest.getId();
-//        // 判断是否存在
-//        InterfaceInfo oldInterfaceInfo = interfaceInfoService.getById(id);
-//        ThrowUtils.throwIf(oldInterfaceInfo == null, ErrorCode.NOT_FOUND_ERROR);
-//        // 仅本人或管理员可编辑
-//        if (!oldInterfaceInfo.getUserId().equals(loginUser.getId()) && !userService.isAdmin(loginUser)) {
-//            throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
-//        }
-//        boolean result = interfaceInfoService.updateById(InterfaceInfo);
-//        return ResultUtils.success(result);
-//    }
 
 }

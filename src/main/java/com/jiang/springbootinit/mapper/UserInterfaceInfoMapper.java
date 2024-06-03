@@ -3,6 +3,8 @@ package com.jiang.springbootinit.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.jiang.apicommon.model.entity.UserInterfaceInfo;
 
+import java.util.List;
+
 /**
 * @author jiangyanming
 * @description 针对表【user_interface_info(yazi_Api.`interface_info`)】的数据库操作Mapper
@@ -11,6 +13,7 @@ import com.jiang.apicommon.model.entity.UserInterfaceInfo;
 */
 public interface UserInterfaceInfoMapper extends BaseMapper<UserInterfaceInfo> {
 
+    public List<UserInterfaceInfo> getUserInterfaceInfoList(int limit);
 }
 
 
