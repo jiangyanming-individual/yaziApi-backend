@@ -1,8 +1,11 @@
 package com.jiang.springbootinit.model.dto.interfaceinfo;
 
 import lombok.Data;
-
 import java.io.Serializable;
+
+/**
+ * 获取第一次的免费调用次数
+ */
 @Data
 public class InterfaceInfoInovkeRequest implements Serializable {
 
@@ -12,6 +15,7 @@ public class InterfaceInfoInovkeRequest implements Serializable {
     private Long id;
 
     /**
+     *
      * 请求参数
      */
     private String userRequestParams;

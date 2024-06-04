@@ -1,26 +1,28 @@
 package com.jiang.springbootinit.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.gson.Gson;
 import com.jiang.apicommon.model.entity.InterfaceInfo;
 import com.jiang.apicommon.model.entity.User;
+import com.jiang.apicommon.model.entity.UserInterfaceInfo;
 import com.jiang.springbootinit.annotation.AuthCheck;
 import com.jiang.springbootinit.common.*;
 import com.jiang.springbootinit.constant.UserConstant;
 import com.jiang.springbootinit.exception.BusinessException;
 import com.jiang.springbootinit.exception.ThrowUtils;
-import com.jiang.springbootinit.model.dto.interfaceinfo.InterfaceInfoAddRequest;
-import com.jiang.springbootinit.model.dto.interfaceinfo.InterfaceInfoInovkeRequest;
-import com.jiang.springbootinit.model.dto.interfaceinfo.InterfaceInfoQueryRequest;
-import com.jiang.springbootinit.model.dto.interfaceinfo.InterfaceInfoUpdateRequest;
+import com.jiang.springbootinit.model.dto.interfaceinfo.*;
 import com.jiang.springbootinit.model.enums.InterfaceInfoStatusEnum;
 import com.jiang.springbootinit.model.vo.InterfaceInfoVO;
+import com.jiang.springbootinit.model.vo.UserInterfaceInfoVO;
 import com.jiang.springbootinit.service.InterfaceInfoService;
+import com.jiang.springbootinit.service.UserInterfaceInfoService;
 import com.jiang.springbootinit.service.UserService;
 import com.jiang.yaziapiclientsdk.client.YaZiApiClient;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.checkerframework.checker.optional.qual.Present;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
@@ -42,10 +44,15 @@ public class InterfaceInfoController {
     private UserService userService;
 
     @Resource
+    private UserInterfaceInfoService userInterfaceInfoService;
+
+    @Resource
     private YaZiApiClient yaZiApiClient;
 
     private final static Gson GSON = new Gson();
 
+
+    private final  static  int FREE_COUNT =10;
 
     // region 增删改查
     /**
@@ -257,7 +264,6 @@ public class InterfaceInfoController {
     public BaseResponse<Object> invokeInterfaceInfo(@RequestBody InterfaceInfoInovkeRequest interfaceInfoInovkeRequest,HttpServletRequest request) {
         //判断接口是否存在
         if (interfaceInfoInovkeRequest == null || interfaceInfoInovkeRequest.getId()<=0) {
-
             throw new BusinessException(ErrorCode.PARAMS_ERROR,"请求接口为空");
         }
         long id = interfaceInfoInovkeRequest.getId();
@@ -285,6 +291,87 @@ public class InterfaceInfoController {
 //        System.out.println("接口调用结果result:" + result);
         //返回结果
         return ResultUtils.success(result);
+    }
+
+    /**
+     * 给每个用户给每个接口申请免费10次调用机会
+     * @param request
+     * @return
+     */
+    @PostMapping("/getFreeInvokeCount")
+    public BaseResponse<UserInterfaceInfoVO> getFreeInvokeCount(@RequestBody InterfaceInfoFreeInvokeRequest interfaceInfoFreeInvokeRequest, HttpServletRequest request) {
+        //判断接口是否存在
+        if (interfaceInfoFreeInvokeRequest == null || interfaceInfoFreeInvokeRequest.getId() <=0){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"请求参数异常");
+        }
+        User loginUser = userService.getLoginUser(request);
+        if (loginUser == null){
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR,"用户未登录");
+        }
+        //判断接口是否存在；
+        long interfaceInfoId = interfaceInfoFreeInvokeRequest.getId();
+        InterfaceInfo oldInterfaceInfo = interfaceInfoService.getById(interfaceInfoId);
+
+        if (oldInterfaceInfo == null){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"请求接口不存在");
+        }
+        //查询是否已经获取过免费次数
+        QueryWrapper<UserInterfaceInfo> userInterfaceInfoQueryWrapper = new QueryWrapper<>();
+        userInterfaceInfoQueryWrapper.eq("userId",loginUser.getId());
+        userInterfaceInfoQueryWrapper.eq("interfaceInfoId",interfaceInfoId);
+        //先判断是否已经免费获取，如果没有就直接插入；
+        UserInterfaceInfo userInterfaceInfo = userInterfaceInfoService.getOne(userInterfaceInfoQueryWrapper);
+
+        UserInterfaceInfo newUserInterfaceInfo = new UserInterfaceInfo();
+        UserInterfaceInfoVO userInterfaceInfoVO = new UserInterfaceInfoVO();
+        if (userInterfaceInfo == null){
+            newUserInterfaceInfo.setUserId(loginUser.getId());
+            newUserInterfaceInfo.setInterfaceInfoId(interfaceInfoId);
+            newUserInterfaceInfo.setLeftNum(FREE_COUNT); //免费10次；
+            boolean result = userInterfaceInfoService.save(newUserInterfaceInfo);
+            if (!result){
+                throw new BusinessException(ErrorCode.OPERATION_ERROR,"插入调用免费次数失败");
+            }
+        }else {
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR,"已经免费获取过次数");
+        }
+        BeanUtils.copyProperties(newUserInterfaceInfo,userInterfaceInfoVO);
+        return ResultUtils.success(userInterfaceInfoVO);
+    }
+
+
+    /**
+     * 查询每个用户剩余次数
+     * @param request
+     * @return
+     */
+    @PostMapping("/getLeftInvokeCount")
+    public BaseResponse<Integer> getLeftFreeInvokeCount(@RequestBody InterfaceInfoFreeInvokeRequest interfaceInfoFreeInvokeRequest, HttpServletRequest request) {
+        //判断接口是否存在
+        if (interfaceInfoFreeInvokeRequest == null || interfaceInfoFreeInvokeRequest.getId() <=0){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"请求参数异常");
+        }
+        User loginUser = userService.getLoginUser(request);
+        if (loginUser == null){
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR,"用户未登录");
+        }
+        //判断接口是否存在；
+        long interfaceInfoId = interfaceInfoFreeInvokeRequest.getId();
+        InterfaceInfo oldInterfaceInfo = interfaceInfoService.getById(interfaceInfoId);
+
+        if (oldInterfaceInfo == null){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"请求接口不存在");
+        }
+        //查询是否已经获取过免费次数
+        QueryWrapper<UserInterfaceInfo> userInterfaceInfoQueryWrapper = new QueryWrapper<>();
+        userInterfaceInfoQueryWrapper.eq("userId",loginUser.getId());
+        userInterfaceInfoQueryWrapper.eq("interfaceInfoId",interfaceInfoId);
+        UserInterfaceInfo userInterfaceInfo = userInterfaceInfoService.getOne(userInterfaceInfoQueryWrapper);
+
+        if (userInterfaceInfo == null){
+            throw new BusinessException(ErrorCode.OPERATION_ERROR,"还没有开通该接口");
+        }
+        return ResultUtils.success(userInterfaceInfo.getLeftNum());
     }
 
 }
