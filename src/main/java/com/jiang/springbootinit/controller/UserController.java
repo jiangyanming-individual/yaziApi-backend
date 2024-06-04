@@ -209,14 +209,14 @@ public class UserController {
 
     /**
      * 分页获取用户列表（仅管理员）
-     *
      * @param userQueryRequest
+     * 使用get的方式
      * @param request
      * @return
      */
-    @PostMapping("/list/page")
+    @GetMapping("/list/page")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-    public BaseResponse<Page<User>> listUserByPage(@RequestBody UserQueryRequest userQueryRequest,
+    public BaseResponse<Page<User>> listUserByPage(UserQueryRequest userQueryRequest,
             HttpServletRequest request) {
         long current = userQueryRequest.getCurrent();
         long size = userQueryRequest.getPageSize();
@@ -224,7 +224,6 @@ public class UserController {
                 userService.getQueryWrapper(userQueryRequest));
         return ResultUtils.success(userPage);
     }
-
     /**
      * 分页获取用户封装列表
      *
@@ -232,8 +231,8 @@ public class UserController {
      * @param request
      * @return
      */
-    @PostMapping("/list/page/vo")
-    public BaseResponse<Page<UserVO>> listUserVOByPage(@RequestBody UserQueryRequest userQueryRequest,
+    @GetMapping("/list/page/vo")
+    public BaseResponse<Page<UserVO>> listUserVOByPage(UserQueryRequest userQueryRequest,
             HttpServletRequest request) {
         if (userQueryRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
