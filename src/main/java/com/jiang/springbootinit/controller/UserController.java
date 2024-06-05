@@ -218,16 +218,10 @@ public class UserController {
         }
         QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
         //模糊查询
-        long id = userSearchRequest.getId();
         String userName = userSearchRequest.getUserName();
         String userAccount = userSearchRequest.getUserAccount();
-        String userRole = userSearchRequest.getUserRole();
-
-        userQueryWrapper.eq("id",id);
-        userQueryWrapper.like(StringUtils.isNoneBlank(userName),"userName",userName);
-        userQueryWrapper.like(StringUtils.isNoneBlank(userAccount),"userAccount",userAccount);
-        userQueryWrapper.eq(StringUtils.isNoneBlank(userRole,"userRole"),"userRole",userRole);
-
+        userQueryWrapper.like(StringUtils.isNotBlank(userName),"userName",userName).
+                or().like(StringUtils.isNotBlank(userAccount),"userAccount",userAccount);
         User user = userService.getOne(userQueryWrapper);
         if (user == null){
              throw new BusinessException(ErrorCode.PARAMS_ERROR,"没有符合条件的用户");

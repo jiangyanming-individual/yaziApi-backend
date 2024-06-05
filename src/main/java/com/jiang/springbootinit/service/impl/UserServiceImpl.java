@@ -1,6 +1,7 @@
 package com.jiang.springbootinit.service.impl;
 
 import static com.jiang.springbootinit.constant.UserConstant.USER_LOGIN_STATE;
+import static net.sf.jsqlparser.util.validation.metadata.NamedObject.user;
 
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.crypto.digest.DigestUtil;
@@ -24,6 +25,8 @@ import com.jiang.springbootinit.utils.SqlUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -48,7 +51,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      */
     private static final String SALT = "yupi";
     private final UserMapper userMapper;
+    //加锁
+    private Lock lock=new  ReentrantLock();
 
+    private static final String AVATAR_URL="https://img.zcool.cn/community/01e3745b7c1a23a8012190f25bd02d.jpeg@1280w_1l_2o_100sh.jpg";
 
 //    @Resource
 //    private StringRedisTemplate stringRedisTemplate;
@@ -77,6 +83,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (!userPassword.equals(checkPassword)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "两次输入的密码不一致");
         }
+        //直接使用synchronized关键字：
         synchronized (userAccount.intern()) {
             // 账户不能重复
             QueryWrapper<User> queryWrapper = new QueryWrapper<>();
@@ -97,6 +104,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             user.setUserPassword(encryptPassword);
             user.setAccessKey(accessKey);
             user.setSecretKey(secretKey);
+            user.setUserAvatar(AVATAR_URL);
 
             boolean saveResult = this.save(user);
             if (!saveResult) {
@@ -216,6 +224,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * @param request
      * @return
      */
+
     @Override
     public Long addUser(UserAddRequest userAddRequest, HttpServletRequest request) {
 
@@ -240,20 +249,36 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         //加密；
         String encodeUserPassword = DigestUtils.md5DigestAsHex((SALT + userPassword).getBytes());
-        //查看是否有重复的user
-        QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
-        userQueryWrapper.eq("userAccount",userAccount);
-        Long count= userMapper.selectCount(userQueryWrapper);
-        if (count>0){
-            throw new BusinessException(ErrorCode.PARAMS_ERROR,"该用户已经存在");
-        }
-        userAddRequest.setUserPassword(encodeUserPassword);
 
+        //3. 生成accessKey、secretKey
+        //使用的是hutool
+        String accessKey = DigestUtil.md5Hex(SALT + userAccount + RandomUtil.randomNumbers(5));
+        String secretKey = DigestUtil.md5Hex(SALT + userPassword + RandomUtil.randomNumbers(8));
         User user = new User();
-        BeanUtils.copyProperties(userAddRequest,user); //拷贝用户数据到user
-        int result = userMapper.insert(user);
-        if (result<0){
-            throw new BusinessException(ErrorCode.OPERATION_ERROR,"插入数据库失败");
+        //加锁
+        lock.lock();
+        try {
+            //查看是否有重复的user
+            QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
+            userQueryWrapper.eq("userAccount",userAccount);
+            Long count= userMapper.selectCount(userQueryWrapper);
+            if (count>0){
+                throw new BusinessException(ErrorCode.PARAMS_ERROR,"该用户已经存在");
+            }
+            userAddRequest.setUserPassword(encodeUserPassword);
+            userAddRequest.setUserAvatar(AVATAR_URL);
+            //管理员添加用户需要生成ak, sk
+            user.setAccessKey(accessKey);
+            user.setSecretKey(secretKey);
+            BeanUtils.copyProperties(userAddRequest,user);//拷贝用户数据到user
+            int result = userMapper.insert(user);
+            if (result<0){
+                throw new BusinessException(ErrorCode.OPERATION_ERROR,"插入数据库失败");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            lock.unlock();
         }
         return user.getId();
     }
