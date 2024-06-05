@@ -7,6 +7,7 @@ import cn.hutool.crypto.digest.DigestUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.google.gson.Gson;
 import com.jiang.apicommon.model.entity.User;
 import com.jiang.springbootinit.mapper.UserMapper;
 import com.jiang.springbootinit.model.dto.user.UserAddRequest;
@@ -18,16 +19,21 @@ import com.jiang.springbootinit.model.dto.user.UserQueryRequest;
 import com.jiang.springbootinit.model.enums.UserRoleEnum;
 import com.jiang.springbootinit.model.vo.LoginUserVO;
 import com.jiang.springbootinit.service.UserService;
+import com.jiang.springbootinit.utils.FileUploadUtil;
 import com.jiang.springbootinit.utils.SqlUtils;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 用户服务实现
@@ -42,6 +48,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      */
     private static final String SALT = "yupi";
     private final UserMapper userMapper;
+
+
+//    @Resource
+//    private StringRedisTemplate stringRedisTemplate;
+
+
+    @Resource
+    Gson gson;
 
     public UserServiceImpl(UserMapper userMapper) {
         this.userMapper = userMapper;
@@ -291,5 +305,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         queryWrapper.orderBy(SqlUtils.validSortField(sortField), sortOrder.equals(CommonConstant.SORT_ORDER_ASC),
                 sortField);
         return queryWrapper;
+    }
+
+    @Override
+    public boolean uploadFileAvatar(MultipartFile file, HttpServletRequest request) {
+        User loginUser = this.getLoginUser(request);
+
+        //更新持久层用户头像信息
+        User updateUser = new User();
+        updateUser.setId(loginUser.getId());
+        String url = FileUploadUtil.uploadFileAvatar(file);
+        updateUser.setUserAvatar(url);
+        boolean result = this.updateById(updateUser);
+
+        //更新用户缓存
+        loginUser.setUserAvatar(url);
+        String userJson = gson.toJson(loginUser);
+//        stringRedisTemplate.opsForValue().set(USER_LOGIN_STATE + loginUser.getId(), userJson, JwtUtils.EXPIRE, TimeUnit.MILLISECONDS);
+        return result;
     }
 }

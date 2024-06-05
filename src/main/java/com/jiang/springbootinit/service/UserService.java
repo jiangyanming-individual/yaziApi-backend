@@ -7,6 +7,7 @@ import com.jiang.springbootinit.model.dto.user.UserAddRequest;
 import com.jiang.springbootinit.model.dto.user.UserQueryRequest;
 import com.jiang.springbootinit.model.vo.UserVO;
 import com.jiang.springbootinit.model.vo.LoginUserVO;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
@@ -116,5 +117,14 @@ public interface UserService extends IService<User> {
      * @return
      */
     QueryWrapper<User> getQueryWrapper(UserQueryRequest userQueryRequest);
+
+
+    /**
+     * 上传用户头像
+     * @param file
+     * @param request
+     * @return
+     */
+    boolean uploadFileAvatar(MultipartFile file, HttpServletRequest request);
 
 }

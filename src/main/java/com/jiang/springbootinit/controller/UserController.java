@@ -1,5 +1,6 @@
 package com.jiang.springbootinit.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jiang.apicommon.model.entity.User;
 import com.jiang.springbootinit.annotation.AuthCheck;
@@ -10,30 +11,23 @@ import com.jiang.springbootinit.config.WxOpenConfig;
 import com.jiang.springbootinit.constant.UserConstant;
 import com.jiang.springbootinit.exception.BusinessException;
 import com.jiang.springbootinit.exception.ThrowUtils;
+import com.jiang.springbootinit.model.dto.user.*;
 import com.jiang.springbootinit.model.vo.LoginUserVO;
 import com.jiang.springbootinit.model.vo.UserVO;
 import com.jiang.springbootinit.service.UserService;
 import com.jiang.springbootinit.common.ResultUtils;
-import com.jiang.springbootinit.model.dto.user.UserAddRequest;
-import com.jiang.springbootinit.model.dto.user.UserLoginRequest;
-import com.jiang.springbootinit.model.dto.user.UserQueryRequest;
-import com.jiang.springbootinit.model.dto.user.UserRegisterRequest;
-import com.jiang.springbootinit.model.dto.user.UserUpdateMyRequest;
-import com.jiang.springbootinit.model.dto.user.UserUpdateRequest;
 
 import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import com.jiang.springbootinit.utils.FileUploadUtil;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 用户接口
@@ -162,7 +156,6 @@ public class UserController {
      * @return
      */
     @PostMapping("/update")
-    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     public BaseResponse<Boolean> updateUser(@RequestBody UserUpdateRequest userUpdateRequest,
             HttpServletRequest request) {
         if (userUpdateRequest == null || userUpdateRequest.getId() == null) {
@@ -173,6 +166,23 @@ public class UserController {
         boolean result = userService.updateById(user);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(true);
+    }
+
+
+    /**
+     * 更新头像
+     *
+     * @param file
+     * @param request
+     * @return
+     */
+    @PostMapping("/update/avatar")
+    public BaseResponse<Boolean> updateUserAvatar(@RequestParam(required = false) MultipartFile file, HttpServletRequest request) {
+        if (!FileUploadUtil.validate(file)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        boolean result = userService.uploadFileAvatar(file,request);
+        return ResultUtils.success(result);
     }
 
     /**
@@ -191,6 +201,40 @@ public class UserController {
         User user = userService.getById(id);
         ThrowUtils.throwIf(user == null, ErrorCode.NOT_FOUND_ERROR);
         return ResultUtils.success(user);
+    }
+
+
+    /**
+     * 模拟查询用户
+     * @param
+     * @param request
+     * @return
+     */
+    @PostMapping("/search")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    public BaseResponse<UserVO> getUserByParams(@RequestBody UserSearchRequest userSearchRequest, HttpServletRequest request) {
+        if (userSearchRequest== null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"搜索失败");
+        }
+        QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
+        //模糊查询
+        long id = userSearchRequest.getId();
+        String userName = userSearchRequest.getUserName();
+        String userAccount = userSearchRequest.getUserAccount();
+        String userRole = userSearchRequest.getUserRole();
+
+        userQueryWrapper.eq("id",id);
+        userQueryWrapper.like(StringUtils.isNoneBlank(userName),"userName",userName);
+        userQueryWrapper.like(StringUtils.isNoneBlank(userAccount),"userAccount",userAccount);
+        userQueryWrapper.eq(StringUtils.isNoneBlank(userRole,"userRole"),"userRole",userRole);
+
+        User user = userService.getOne(userQueryWrapper);
+        if (user == null){
+             throw new BusinessException(ErrorCode.PARAMS_ERROR,"没有符合条件的用户");
+        }
+        UserVO userVO = new UserVO();
+        BeanUtils.copyProperties(user, userVO);
+        return ResultUtils.success(userVO);
     }
 
     /**
